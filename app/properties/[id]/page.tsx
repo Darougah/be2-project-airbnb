@@ -5,6 +5,8 @@ import FavoriteToggleButton from '@/components/card/FavoriteToggleButton';
 import ShareButton from '../ShareButton';
 import ImageContainer from '../ImageContainer';
 import PropertyRating from '@/components/card/PropertyRating';
+import BookingCalendar from '@/components/properties/booking/BookingCalendar';
+
 
 async function PropertyDetailsPage({ params }: { params: { id: string } }) {
   const property = await fetchPropertyDetails(params.id);
@@ -34,6 +36,7 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
     </div>
     <div className='lg:col-span-4 flex flex-col items-center'>
       {/* calendar */}
+      <BookingCalendar />
     </div>
   </section>
     </section>

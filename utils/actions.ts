@@ -4,7 +4,7 @@ import db from './db';
 import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { safe } from './../.next/server/middleware';
+// import { safe } from './../.next/server/middleware';
 import { uploadImage } from './supabase';
 
 

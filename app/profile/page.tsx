@@ -4,7 +4,7 @@ import {
   fetchProfile,
   updateProfileImageAction,
 } from '@/utils/actions';
-import ImageInputContainer from '@/components/form/ImageinputContainer';
+import ImageInputContainer from '@/components/form/ImageInputContainer';
 import FormInput from '@/components/form/FormInput';
 import { SubmitButton } from '@/components/form/Buttons';
 

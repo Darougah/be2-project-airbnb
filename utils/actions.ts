@@ -20,7 +20,10 @@ const getAuthUser = async () => {
 };
 
 const getAdminUser = async () => {
-  const user = await getAuthUser();
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('You must be logged in to access this route');
+  }
   if (user.id !== process.env.ADMIN_USER_ID) redirect('/');
   return user;
 };
@@ -681,4 +684,77 @@ export const fetchChartsData = async () => {
     return total;
   }, [] as Array<{ date: string; count: number }>);
   return bookingsPerMonth;
+};
+
+export const fetchAllProperties = async () => {
+  await getAdminUser(); // Ensure only admin can access
+
+  return db.property.findMany({
+    include: {
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+        },
+      },
+    },
+  });
+};
+
+// utils/actions.ts
+export const deleteUserPropertyAction = async (formData: FormData) => {
+  const user = await getAdminUser(); // Ensure admin
+
+  const propertyId = formData.get('propertyId') as string;
+
+  try {
+    await db.property.delete({
+      where: {
+        id: propertyId,
+      },
+    });
+    revalidatePath('/admin');
+    return { message: 'Property deleted successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+
+// new
+
+export const adminUpdatePropertyAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  await getAdminUser(); // Ensure admin user
+  const propertyId = formData.get('id') as string;
+
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(propertySchema, rawData);
+    await db.property.update({
+      where: {
+        id: propertyId,
+      },
+      data: {
+        ...validatedFields,
+      },
+    });
+
+    revalidatePath(`/admin/properties/${propertyId}/edit`);
+    return { message: 'Property updated successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchPropertyById = async (propertyId: string) => {
+  await getAdminUser(); // Ensure admin user
+  return db.property.findUnique({
+    where: {
+      id: propertyId,
+    },
+  });
 };

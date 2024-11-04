@@ -1,4 +1,4 @@
-# 🏠 Next.js Airbnb Project
+# 🏠 Next.js bnb Project
 
 Welcome to the Next.js bnb project! This app allows users to browse listings, book properties, and manage reservations. It’s built with [Next.js](https://nextjs.org), with [Clerk](https://clerk.dev) for authentication, [Prisma](https://prisma.io) for database management.
 

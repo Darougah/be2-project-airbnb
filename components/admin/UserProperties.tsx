@@ -29,7 +29,7 @@ async function UserProperties() {
                 {/* new */}
               <Link
     href={`/admin/properties/${property.id}/edit`}
-    className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
+    className="bg-blue-500 text-white px-4 py-2 rounded mr-4 hover:bg-blue-600 transition-colors duration-200"
   >
     Edit
   </Link>
@@ -38,7 +38,7 @@ async function UserProperties() {
     <input type="hidden" name="propertyId" value={property.id} />
     <button
       type="submit"
-      className="bg-red-500 text-white px-4 py-2 rounded"
+      className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200"
     >
       Delete
     </button>

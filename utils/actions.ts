@@ -10,6 +10,8 @@ import { calculateTotals } from './calculateTotals';
 import { formatDate } from './format';
 
 
+
+// Hämtar den nuvarande autentiserade användaren; omdirigerar om användaren saknas eller profil ej finns
 const getAuthUser = async () => {
   const user = await currentUser();
   if (!user) {
@@ -19,6 +21,7 @@ const getAuthUser = async () => {
   return user;
 };
 
+// Hämtar administratörsanvändaren; kontrollerar adminbehörigheter och omdirigerar om ej behörig
 const getAdminUser = async () => {
   const user = await currentUser();
   if (!user) {
@@ -36,6 +39,8 @@ const renderError = (error: unknown): { message: string } => {
   };
 };
 
+
+// Skapar en profil; validerar indata och uppdaterar användarmetadata i Clerk
 export const createProfileAction = async (
   prevState: any,
   formData: FormData
@@ -68,6 +73,8 @@ export const createProfileAction = async (
   redirect('/');
 };
 
+
+// Hämtar profilbild för den aktuella användaren
 export const fetchProfileImage = async () => {
   const user = await currentUser();
   if (!user) return null;
@@ -84,6 +91,8 @@ export const fetchProfileImage = async () => {
   return profile?.profileImage;
 };
 
+
+// Hämtar profiluppgifter för den aktuella användaren och omdirigerar om ej skapad
 export const fetchProfile = async () => {
   const user = await getAuthUser();
 
@@ -96,6 +105,8 @@ export const fetchProfile = async () => {
   return profile;
 };
 
+
+// Uppdaterar profildata efter validering av formulärdata
 export const updateProfileAction = async (
   prevState: any,
   formData: FormData
@@ -122,6 +133,8 @@ export const updateProfileAction = async (
     return renderError(error);
   }
 };
+
+// Uppdaterar profilbilden med en validerad bild och laddar upp den
 export const updateProfileImageAction = async (
   prevState: any,
   formData: FormData
@@ -147,7 +160,7 @@ export const updateProfileImageAction = async (
   }
 };
 
-
+// Skapar en ny fastighet ,ladda upp bild efter validering
 export const createPropertyAction = async (
   prevState: any,
   formData: FormData
@@ -175,6 +188,7 @@ export const createPropertyAction = async (
 };
 
 
+// Hämtar lista med fastigheter med sök- och filteralternativ
 export const fetchProperties = async ({
   search = '',
   category,
@@ -202,6 +216,8 @@ export const fetchProperties = async ({
   return properties;
 };
 
+
+// Hämtar en favorit med specifikt fastighets-ID för den aktuella användaren
 export const fetchFavoriteId = async ({
   propertyId,
 }: {
@@ -220,6 +236,7 @@ export const fetchFavoriteId = async ({
   return favorite?.id || null;
 };
 
+// Växlar favoritstatus för en fastighet
 export const toggleFavoriteAction = async (prevState: {
   propertyId: string;
   favoriteId: string | null;
@@ -249,6 +266,8 @@ export const toggleFavoriteAction = async (prevState: {
   }
 };
 
+
+// Hämtar lista med favoriter för den aktuella användaren
 export const fetchFavorites = async () => {
   const user = await getAuthUser();
   const favorites = await db.favorite.findMany({
@@ -271,6 +290,8 @@ export const fetchFavorites = async () => {
   return favorites.map((favorite) => favorite.property);
 };
 
+
+// Hämtar detaljer om en fastighet inklusive bokningsinformation
 export const fetchPropertyDetails = (id: string) => {
   return db.property.findUnique({
     where: {
@@ -288,6 +309,8 @@ export const fetchPropertyDetails = (id: string) => {
   });
 };
 
+
+// Skapar en recension för en fastighet och uppdaterar sidan
 export async function createReviewAction(prevState: any, formData: FormData) {
   const user = await getAuthUser();
   try {
@@ -307,6 +330,8 @@ export async function createReviewAction(prevState: any, formData: FormData) {
   }
 }
 
+
+// Hämtar recensioner för en specifik fastighet
 export async function fetchPropertyReviews(propertyId: string) {
   const reviews = await db.review.findMany({
     where: {
@@ -330,6 +355,8 @@ export async function fetchPropertyReviews(propertyId: string) {
   return reviews;
 }
 
+
+// Hämtar recensioner för den aktuella användaren
 export const fetchPropertyReviewsByUser = async () => {
   const user = await getAuthUser();
   const reviews = await db.review.findMany({
@@ -351,6 +378,8 @@ export const fetchPropertyReviewsByUser = async () => {
   return reviews;
 };
 
+
+// Tar bort en specifik recension och uppdaterar sidan
 export const deleteReviewAction = async (prevState: { reviewId: string }) => {
   const { reviewId } = prevState;
   const user = await getAuthUser();
@@ -371,7 +400,7 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
 };
 
 
-
+// Hittar befintlig recension för en fastighet och användare
 export const findExistingReview = async (
   userId: string,
   propertyId: string
@@ -384,6 +413,8 @@ export const findExistingReview = async (
   });
 };
 
+
+// Hämtar genomsnittligt betyg för en fastighet
 export async function fetchPropertyRating(propertyId: string) {
   const result = await db.review.groupBy({
     by: ['propertyId'],
@@ -405,7 +436,7 @@ export async function fetchPropertyRating(propertyId: string) {
   };
 }
 
-
+// Skapar en bokning för en fastighet och beräknar totalsumman
 export const createBookingAction = async (prevState: {
   propertyId: string;
   checkIn: Date;
@@ -444,6 +475,7 @@ export const createBookingAction = async (prevState: {
   redirect('/bookings');
 };
 
+// Hämtar bokningar för den aktuella användaren
 export const fetchBookings = async () => {
   const user = await getAuthUser();
   const bookings = await db.booking.findMany({
@@ -466,6 +498,8 @@ export const fetchBookings = async () => {
   return bookings;
 };
 
+
+// Tar bort en specifik bokning
 export async function deleteBookingAction(prevState: { bookingId: string }) {
   const { bookingId } = prevState;
   const user = await getAuthUser();
@@ -485,6 +519,8 @@ export async function deleteBookingAction(prevState: { bookingId: string }) {
   }
 }
 
+
+// Hämtar uthyrningar för den aktuella användaren och summerar bokningsnätter
 export const fetchRentals = async () => {
   const user = await getAuthUser();
   const rentals = await db.property.findMany({
@@ -529,6 +565,8 @@ export const fetchRentals = async () => {
   return rentalsWithBookingSums;
 };
 
+
+// Tar bort en specifik uthyrning
 export async function deleteRentalAction(prevState: { propertyId: string }) {
   const { propertyId } = prevState;
   const user = await getAuthUser();
@@ -548,6 +586,8 @@ export async function deleteRentalAction(prevState: { propertyId: string }) {
   }
 }
 
+
+// Hämtar detaljer om en specifik uthyrning
 export const fetchRentalDetails = async (propertyId: string) => {
   const user = await getAuthUser();
 
@@ -559,6 +599,8 @@ export const fetchRentalDetails = async (propertyId: string) => {
   });
 };
 
+
+// Uppdaterar fastighetens uppgifter
 export const updatePropertyAction = async (
   prevState: any,
   formData: FormData
@@ -585,6 +627,8 @@ export const updatePropertyAction = async (
     return renderError(error);
   }
 };
+
+// Uppdaterar fastighetsbild
 export const updatePropertyImageAction = async (
   prevState: any,
   formData: FormData
@@ -614,6 +658,7 @@ export const updatePropertyImageAction = async (
 };
 
 
+// Hämtar bokningar som är kopplade till en specifik uthyrning
 export const fetchReservations = async () => {
   const user = await getAuthUser();
 
@@ -642,6 +687,8 @@ export const fetchReservations = async () => {
   return reservations;
 };
 
+
+// Hämtar statistikdata för adminöversikt
 export const fetchStats = async () => {
   await getAdminUser();
 
@@ -656,6 +703,7 @@ export const fetchStats = async () => {
   };
 };
 
+// Hämtar data för diagram baserat på senaste sex månaderna .. pajjade denna just nu
 export const fetchChartsData = async () => {
   await getAdminUser();
   const date = new Date();
@@ -686,6 +734,7 @@ export const fetchChartsData = async () => {
   return bookingsPerMonth;
 };
 
+// Hämtar alla fastigheter för adminöversikt
 export const fetchAllProperties = async () => {
   await getAdminUser(); // Ensure only admin can access
 
@@ -703,6 +752,8 @@ export const fetchAllProperties = async () => {
 };
 
 // utils/actions.ts
+
+// Raderar användares fastighet (adminbehörighet krävs)
 export const deleteUserPropertyAction = async (formData: FormData) => {
   const user = await getAdminUser(); // Ensure admin
 
@@ -723,7 +774,7 @@ export const deleteUserPropertyAction = async (formData: FormData) => {
 
 
 // new
-
+// Uppdaterar fastighetens detaljer (adminbehörighet krävs)
 export const adminUpdatePropertyAction = async (
   prevState: any,
   formData: FormData
@@ -750,6 +801,7 @@ export const adminUpdatePropertyAction = async (
   }
 };
 
+// Hämtar fastighet med specifikt ID (adminbehörighet krävs)
 export const fetchPropertyById = async (propertyId: string) => {
   await getAdminUser(); // Ensure admin user
   return db.property.findUnique({

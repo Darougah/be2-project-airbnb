@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏠 Next.js Airbnb Project
 
-## Getting Started
+Welcome to the Next.js bnb project! This app allows users to browse listings, book properties, and manage reservations. It’s built with [Next.js](https://nextjs.org), with [Clerk](https://clerk.dev) for authentication, [Prisma](https://prisma.io) for database management.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Getting Started
+
+### Prerequisites
+
+1. **Node.js**: Ensure Node.js is installed (version 16 or higher recommended).
+
+### Quick Setup
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Run the Dev Server**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Access the App**:
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see it live.
+
+---
+
+## 📄 Environment Setup
+
+To set up the environment variables, create two files in the root directory of your project: `.env` and `.env.local`. Populate them as shown below. Replace the placeholders with your actual credentials.
+
+### `.env`
+
+```ini
+# Primary Database Connection
+DATABASE_URL="postgresql://your_database_url"
+DIRECT_URL="postgresql://your_direct_database_url"
+
+# Supabase settings
+SUPABASE_URL="https://your_supabase_url.supabase.co"
+SUPABASE_KEY="your_supabase_key"
+
+# Admin User ID (replace with the correct admin user ID)
+ADMIN_USER_ID="your_admin_user_id"
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### `.env.local`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```ini
+# Clerk settings (for user authentication)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your_clerk_publishable_key"
+CLERK_SECRET_KEY="your_clerk_secret_key"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Redirects for user sign-in and sign-up
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL="/profile/create"
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL="/profile/create"
 
-## Learn More
+# Website URL
+NEXT_PUBLIC_WEBSITE_URL="https://your_website_url.com"
+```
 
-To learn more about Next.js, take a look at the following resources:
+> **Important**: Avoid sharing these files publicly, as they contain sensitive information.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌍 Deployment
 
-## Deploy on Vercel
+The easiest way to deploy this app is through [Vercel](https://vercel.com):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Create a project on Vercel and link it to this repository.
+2. Add the environment variables in Vercel’s settings under the project.
+3. Deploy with one click!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+That’s it! Now you’re all set to run and deploy your very own bnb app. 🙌

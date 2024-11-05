@@ -23,7 +23,7 @@ import { formatDate } from './format';
 const getAuthUser = async () => {
   const user = await currentUser();
   if (!user) {
-    // Redirect to login if not authenticated
+    
     redirect('/login'); // Ensure this is the correct path for your login
     return null; // Return null to avoid further errors
   }

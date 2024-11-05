@@ -12,12 +12,25 @@ import { formatDate } from './format';
 
 
 // Hämtar den nuvarande autentiserade användaren; omdirigerar om användaren saknas eller profil ej finns
+// const getAuthUser = async () => {
+//   const user = await currentUser();
+//   if (!user) {
+//     throw new Error('You must be logged in to access this route');
+//   }
+//   if (!user.privateMetadata.hasProfile) redirect('/profile/create');
+//   return user;
+// };
 const getAuthUser = async () => {
   const user = await currentUser();
   if (!user) {
-    throw new Error('You must be logged in to access this route');
+    // Redirect to login if not authenticated
+    redirect('/login'); // Ensure this is the correct path for your login
+    return null; // Return null to avoid further errors
   }
-  if (!user.privateMetadata.hasProfile) redirect('/profile/create');
+  if (!user.privateMetadata.hasProfile) {
+    redirect('/profile/create');
+    return null;
+  }
   return user;
 };
 

@@ -20,19 +20,23 @@ import { formatDate } from './format';
 //   if (!user.privateMetadata.hasProfile) redirect('/profile/create');
 //   return user;
 // };
+
 const getAuthUser = async () => {
   const user = await currentUser();
+  
   if (!user) {
-    
-    redirect('/login'); // Ensure this is the correct path for your login
-    return null; // Return null to avoid further errors
+    redirect('/login'); // Redirect to login if not authenticated
+    throw new Error('You must be logged in to access this route'); // Provide feedback in case redirect fails
   }
-  if (!user.privateMetadata.hasProfile) {
-    redirect('/profile/create');
-    return null;
+
+  if (!user.privateMetadata?.hasProfile) {
+    redirect('/profile/create'); // Redirect to profile creation if profile is missing
+    throw new Error('Profile creation required'); // Provide feedback in case redirect fails
   }
-  return user;
+
+  return user; // Return the authenticated user with profile
 };
+
 
 // Hämtar administratörsanvändaren; kontrollerar adminbehörigheter och omdirigerar om ej behörig
 const getAdminUser = async () => {

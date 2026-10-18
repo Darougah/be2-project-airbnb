@@ -21,8 +21,9 @@ export default function BookingWrapper({
       propertyId,
       price,
       bookings,
+      ...(useProperty.getState().propertyId !== propertyId ? { range: undefined } : {}),
     });
-  }, []);
+  }, [propertyId, price, bookings]);
   return (
     <>
       <BookingCalendar />

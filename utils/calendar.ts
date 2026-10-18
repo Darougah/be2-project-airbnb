@@ -80,11 +80,7 @@ export function calculateDaysBetween({
   checkIn: Date;
   checkOut: Date;
 }) {
-  // Calculate the difference in milliseconds
-  const diffInMs = Math.abs(checkOut.getTime() - checkIn.getTime());
-
-  // Convert the difference in milliseconds to days
-  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-
-  return diffInDays;
+  const start = Date.UTC(checkIn.getFullYear(), checkIn.getMonth(), checkIn.getDate());
+  const end = Date.UTC(checkOut.getFullYear(), checkOut.getMonth(), checkOut.getDate());
+  return (end - start) / 86400000;
 }

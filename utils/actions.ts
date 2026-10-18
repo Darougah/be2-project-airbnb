@@ -12,31 +12,13 @@ import { formatDate } from './format';
 
 
 // Hämtar den nuvarande autentiserade användaren; omdirigerar om användaren saknas eller profil ej finns
-// const getAuthUser = async () => {
-//   const user = await currentUser();
-//   if (!user) {
-//     throw new Error('You must be logged in to access this route');
-//   }
-//   if (!user.privateMetadata.hasProfile) redirect('/profile/create');
-//   return user;
-// };
-
 const getAuthUser = async () => {
   const user = await currentUser();
-  
-  if (!user) {
-    redirect('/login'); // Redirect to login if not authenticated
-    throw new Error('You must be logged in to access this route'); // Provide feedback in case redirect fails
-  }
-
-  if (!user.privateMetadata?.hasProfile) {
-    redirect('/profile/create'); // Redirect to profile creation if profile is missing
-    throw new Error('Profile creation required'); // Provide feedback in case redirect fails
-  }
-
-  return user; // Return the authenticated user with profile
+  if (!user) redirect('/sign-in');
+  const profile = await db.profile.findUnique({ where: { clerkId: user.id }, select: { id: true } });
+  if (!profile) redirect('/profile/create');
+  return user;
 };
-
 
 // Hämtar administratörsanvändaren; kontrollerar adminbehörigheter och omdirigerar om ej behörig
 const getAdminUser = async () => {
@@ -69,8 +51,10 @@ export const createProfileAction = async (
     const rawData = Object.fromEntries(formData);
     const validatedFields = validateWithZodSchema(profileSchema, rawData);
 
-    await db.profile.create({
-      data: {
+    await db.profile.upsert({
+      where: { clerkId: user.id },
+      update: validatedFields,
+      create: {
         clerkId: user.id,
         email: user.emailAddresses[0].emailAddress,
         profileImage: user.imageUrl ?? '',
@@ -266,6 +250,7 @@ export const toggleFavoriteAction = async (prevState: {
       await db.favorite.delete({
         where: {
           id: favoriteId,
+          profileId: user.id,
         },
       });
     } else {
@@ -462,6 +447,11 @@ export const createBookingAction = async (prevState: {
   const user = await getAuthUser();
 
   const { propertyId, checkIn, checkOut } = prevState;
+  if (!(checkIn instanceof Date) || !(checkOut instanceof Date) ||
+      !Number.isFinite(checkIn.getTime()) || !Number.isFinite(checkOut.getTime()) ||
+      checkOut <= checkIn || checkIn < new Date(new Date().setHours(0, 0, 0, 0))) {
+    return { message: 'Choose valid future check-in and check-out dates.' };
+  }
   const property = await db.property.findUnique({
     where: { id: propertyId },
     select: { price: true },
@@ -476,7 +466,12 @@ export const createBookingAction = async (prevState: {
   });
 
   try {
-    const booking = await db.booking.create({
+    await db.$transaction(async (tx) => {
+    const overlap = await tx.booking.findFirst({ where: {
+      propertyId, checkIn: { lt: checkOut }, checkOut: { gt: checkIn },
+    } });
+    if (overlap) throw new Error('These dates are no longer available. Please choose another stay.');
+    await tx.booking.create({
       data: {
         checkIn,
         checkOut,
@@ -486,6 +481,7 @@ export const createBookingAction = async (prevState: {
         propertyId,
       },
     });
+    }, { isolationLevel: 'Serializable' });
   } catch (error) {
     return renderError(error);
   }

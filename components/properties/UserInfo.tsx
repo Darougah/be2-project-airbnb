@@ -23,7 +23,7 @@ function UserInfo({ profile: { profileImage, firstName } }: UserInfoProps) {
           <span className='font-bold'> {firstName}</span>
         </p>
         <p className='text-muted-foreground font-light'>
-          Superhost &middot; 2 years hosting
+          {firstName === 'Demo Host' ? 'Demo host · Portfolio project' : 'Property host'}
         </p>
       </div>
     </article>

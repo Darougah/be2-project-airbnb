@@ -3,6 +3,7 @@ import FormContainer from '@/components/form/FormContainer';
 import FormInput from '@/components/form/FormInput';
 import { createProfileAction } from '@/utils/actions';
 import { currentUser } from '@clerk/nextjs/server';
+import db from '@/utils/db';
 import { redirect } from 'next/navigation';
 
 
@@ -11,7 +12,9 @@ import { redirect } from 'next/navigation';
 async function CreateProfile() {
   const user = await currentUser();
 
-  if (user?.privateMetadata?.hasProfile) redirect('/');
+  if (!user) redirect('/sign-in');
+  const profile = await db.profile.findUnique({ where: { clerkId: user.id }, select: { id: true } });
+  if (profile) redirect('/');
   return (
     <section>
       <h1 className='text-2xl font-semibold mb-8 capitalize'> new user</h1>

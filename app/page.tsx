@@ -9,6 +9,8 @@ function HomePage({
 }) {
   return (
     <section>
+      <h1 className='text-3xl font-semibold mb-3'>Find your next escape</h1>
+      <p className='text-muted-foreground mb-6'>Portfolio demo: sample stays are fictional and illustrated. Reservations are for testing; no payments are collected.</p>
       <CategoriesList
         category={searchParams?.category}
         search={searchParams?.search}

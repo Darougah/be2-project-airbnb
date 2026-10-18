@@ -16,7 +16,8 @@ export const calculateTotals = ({
   //fasta avgifter
   const cleaning = 21;
   const service = 40;
-  const tax = subTotal * 0.1;
+  // Monetary columns currently store whole currency units.
+  const tax = Math.round(subTotal * 0.1);
   const orderTotal = subTotal + cleaning + service + tax;
   return { totalNights, subTotal, cleaning, service, tax, orderTotal };
 };

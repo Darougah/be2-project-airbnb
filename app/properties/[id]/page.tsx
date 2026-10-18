@@ -75,6 +75,7 @@ async function PropertyDetailsPage({ params }: { params: { id: string } }) {
     <div className='lg:col-span-4 flex flex-col items-center'>
       {/* calendar */}
       <DynamicBookingWrapper
+      key={property.id}
       propertyId={property.id}
       price={property.price}
       bookings={property.bookings}

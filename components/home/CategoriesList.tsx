@@ -9,7 +9,7 @@ function CategoriesList({
   category?: string;
   search?: string;
 }) {
-  const searchTerm = search ? `&search=${search}` : '';
+  const searchTerm = search ? `&search=${encodeURIComponent(search)}` : '';
   return (
     <section>
       <ScrollArea className='py-6'>

@@ -300,7 +300,7 @@ export const fetchPropertyDetails = (id: string) => {
       id,
     },
     include: {
-      profile: true,
+      profile: { select: { clerkId: true, firstName: true, profileImage: true } },
       bookings: {
         select: {
           checkIn: true,
